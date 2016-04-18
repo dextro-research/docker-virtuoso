@@ -16,7 +16,7 @@ then
   touch /sql-query.sql
   if [ "$DBA_PASSWORD" ]; then echo "user_set_password('dba', '$DBA_PASSWORD');" >> /sql-query.sql ; fi
   if [ "$SPARQL_UPDATE" = "true" ]; then echo "GRANT SPARQL_UPDATE to \"SPARQL\";" >> /sql-query.sql ; fi
-  virtuoso-t +wait && isql-v -U dba -P dba < /dump_nquads_procedure.sql && isql-v -U dba -P dba < /sql-query.sql
+  virtuoso-t +wait && isql-v -U dba -P dba < /dump_nquads_procedure.sql && isql-v -U dba -P dba < /sql-query.sql && isql-v -U dba -P dba < /dump_one_graph_procedure.sql
   kill $(ps aux | grep '[v]irtuoso-t' | awk '{print $2}')
   touch /.dba_pwd_set
 fi
@@ -39,6 +39,9 @@ then
     touch /.data_loaded
 fi
 
+chmod u+x /usr/local/virtuoso-opensource/var/lib/virtuoso/db/periodic_backup.sh
+
+cron
 
 virtuoso-t +wait +foreground
 
